@@ -1,14 +1,23 @@
-const express = require("express")
-const mongoose = require("mongoose")
-const cors = require("cors")
-const EmployeeModel = require("./Models/Employee")
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import EmployeeModel from "./Models/Employee.js";
+import dotenv from "dotenv";
+import connectDB from "./config/connectDB.js";
+
+dotenv.config()
+const port=process.env.PORT || 3001
+const DATABASE_URL=process.env.MONGODB_URI;
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect("mongodb://127.0.0.1:27017/Admin-User-Data")
+connectDB(DATABASE_URL);
 
+app.get('/',(req,res)=>{
+    res.send("this is the resposne at home route");
+})
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
     EmployeeModel.findOne({ email: email })
@@ -31,6 +40,6 @@ app.post('/register', (req, res) => {
         .catch(err => res.json(err))
 })
 
-app.listen(3001, () => {
-    console.log("Server is Running")
+app.listen(port, () => {
+    console.log("Server is Running on port ",port);
 })
