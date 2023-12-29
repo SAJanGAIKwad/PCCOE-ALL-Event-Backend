@@ -3,15 +3,17 @@ import mongoose from "mongoose";
 import cors from "cors";
 import EmployeeModel from "./Models/Employee.js";
 import dotenv from "dotenv";
+import connectDB from "./config/connectDB.js";
 
 dotenv.config()
 const port=process.env.PORT || 3001
+const DATABASE_URL=process.env.MONGODB_URI;
 
 const app = express()
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect("mongodb://127.0.0.1:27017/Admin-User-Data")
+connectDB(DATABASE_URL);
 
 app.get('/',(req,res)=>{
     res.send("this is the resposne at home route");
