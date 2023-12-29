@@ -1,12 +1,12 @@
 import express from "express";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import cors from "cors";
-import EmployeeModel from "./Models/Employee.js";
+import UserModel from "./Models/Login.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 
 dotenv.config()
-const port=process.env.PORT || 3001
+const port=process.env.PORT || 3002
 const DATABASE_URL=process.env.MONGODB_URI;
 
 const app = express()
@@ -20,7 +20,7 @@ app.get('/',(req,res)=>{
 })
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-    EmployeeModel.findOne({ email: email })
+    UserModel.findOne({ email: email })
         .then(user => {
             if (user) {
                 if (user.password === password) {
@@ -35,7 +35,7 @@ app.post("/login", (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    EmployeeModel.create(req.body)
+    UserModel.create(req.body)
         .then(admin_user_datas => res.json(admin_user_datas))
         .catch(err => res.json(err))
 })
