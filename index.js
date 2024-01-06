@@ -1,8 +1,4 @@
 import express from "express";
-<<<<<<< HEAD
-=======
-// import mongoose from "mongoose";
->>>>>>> upstream/main
 import cors from "cors";
 import UserModel from "./Models/Login.js";
 import dotenv from "dotenv";
