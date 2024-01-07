@@ -4,6 +4,7 @@ import UserModel from "./Models/Login.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
+import cookieParser from "cookie-parser";
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
 dotenv.config()
@@ -11,8 +12,12 @@ const port = process.env.PORT || 3002
 const DATABASE_URL = process.env.MONGODB_URI;
 
 const app = express()
-app.use(express.json())
-app.use(cors())
+app.use(cookieParser());
+app.use(express.json());
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:5173',
+}));
 
 connectDB(DATABASE_URL);
 app.get('/', (req, res) => {
@@ -48,16 +53,17 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.get('/profile', (req, res) => {
-  const { token } = req.cookies;
+app.get('/profile', (req,res) => {
+  const {token} = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const { name, email, _id } = await UserModel.findById(userData.id);
-      res.json({ name, email, _id });
+      const {name,email,_id} = await UserModel.findById(userData.id);
+      res.json({name,email,_id});
     });
   } else {
-    res.json(null);
+
+    res.json('user Info');
   }
 });
 
