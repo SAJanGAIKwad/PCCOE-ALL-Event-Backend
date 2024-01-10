@@ -6,6 +6,6 @@ const UserSchema = new mongoose.Schema({
     mobile:Number,
     password:String
 })
-const UserModel = mongoose.model('Admin-User-Data',UserSchema)
+const User= mongoose.model('User',UserSchema)
 
-export default UserModel;
+export default User;

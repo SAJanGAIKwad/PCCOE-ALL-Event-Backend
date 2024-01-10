@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import UserModel from "./Models/Login.js";
+import User from "./Models/user.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  UserModel.findOne({ email: email })
+  User.findOne({ email: email })
     .then(user => {
       if (user) {
         if (user.password === password) {
@@ -52,8 +52,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  UserModel.create(req.body)
-    .then(admin_user_datas => res.json(admin_user_datas))
+  User.create(req.body)
+    .then(users => res.json(users))
     .catch(err => res.json(err))
 });
 
@@ -63,7 +63,7 @@ app.get('/profile', (req,res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const {name,email,_id} = await UserModel.findById(userData.id);
+      const {name,email,_id} = await User.findById(userData.id);
       res.json({name,email,_id});
     });
   } else {
