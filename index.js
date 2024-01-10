@@ -5,6 +5,11 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+
+import eventRoutes from "./routes/eventRoutes.js";
+
+
+
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
 dotenv.config()
@@ -70,6 +75,14 @@ app.get('/profile', (req,res) => {
 app.post('/logout', (req, res) => {
   res.cookie('token', '').json(true);
 });
+
+
+
+
+
+
+
+app.use('/api/events',eventRoutes);
 
 app.listen(port, () => {
   console.log("Server is Running on port ", port);

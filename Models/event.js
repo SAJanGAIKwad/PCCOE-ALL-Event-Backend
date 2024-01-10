@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from './User';
+// import User from './Login.js';
 
 const EventSchema=new mongoose.Schema({
     title:{
@@ -34,8 +34,9 @@ const EventSchema=new mongoose.Schema({
         default:0
     },
     organizer:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        // type:mongoose.Schema.Types.ObjectId,
+        // ref:{User},
+        type:String,
         required:true
     },
     status:{
