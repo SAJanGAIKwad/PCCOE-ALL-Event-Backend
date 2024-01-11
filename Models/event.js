@@ -27,26 +27,23 @@ const EventSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    currentRegisteration:{
+    currentRegisterations:{
         type:Number,
-        required:true
+        required:true,
+        default:0
     },
-    organizer:{
-        type:String,
-        required:true
-    },
-    status:{
-        type:String,
-        enum:["active","inactive"],
-        required:true
-    },
+    // organizer:{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:"User",
+    //     required:true
+    //  },
+     
     image:{
         type:String,
-        required:true
+        required:[true,"image is required"]
     }
 
-
-})
+},{timestamps:true});
 
 const Event=mongoose.model("Event",EventSchema)
 
