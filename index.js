@@ -1,11 +1,13 @@
 import express from "express";
 import cors from "cors";
-import UserModel from "./Models/Login.js";
+import UserModel from "./Models/User.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
+import nodemailer from 'nodemailer';
+
 
 dotenv.config()
 const port = process.env.PORT || 3002
@@ -52,14 +54,65 @@ app.post('/register', async (req, res) => {
     .catch(err => res.json(err))
 });
 
+app.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+  UserModel.findOne({ email: email })
+    .then(user => {
+      if (!user) {
+        return res.send({ Status: "User not Existed" })
+      }
+      const token = jwt.sign({ id: user._id }, "jwt_secret_key", { expiresIn: "1d" })
+      var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'sajangaikwad2002@gmail.com',
+          pass: 'hyctdhaxvvjftjlz',
+        }
+      });
 
-app.get('/profile', (req,res) => {
-  const {token} = req.cookies;
+      var mailOptions = {
+        from: 'sajangaikwad2002@gmail.com',
+        to: 'sajan.gaikwad21@pccoepune.org',
+        subject: 'Reset Your Password',
+        text: `http://localhost:5173/reset-password/${user.name}/${token}`
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          return res.send({ Status: "Success" })
+        }
+      });
+    });
+})
+
+app.post('/reset-password/:id/:token', (req, res) => {
+  const {id, token} = req.params
+  const {password} = req.body
+
+  jwt.verify(token, "jwt_secret_key", (err, decoded) => {
+      if(err) {
+          return res.json({Status: "Error with token"})
+      } else {
+          bcrypt.hash(password, 10)
+          .then(hash => {
+              UserModel.findByIdAndUpdate({_id: id}, {password: hash})
+              .then(u => res.send({Status: "Success"}))
+              .catch(err => res.send({Status: err}))
+          })
+          .catch(err => res.send({Status: err}))
+      }
+  })
+})
+
+app.get('/profile', (req, res) => {
+  const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const {name,email,_id} = await UserModel.findById(userData.id);
-      res.json({name,email,_id});
+      const { name, email, _id } = await UserModel.findById(userData.id);
+      res.json({ name, email, _id });
     });
   } else {
 
