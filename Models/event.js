@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import User from './User';
 
 const EventSchema=new mongoose.Schema({
     title:{
@@ -33,17 +32,12 @@ const EventSchema=new mongoose.Schema({
         required:true,
         default:0
     },
-    organizer:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    },
-    status:{
-        type:String,
-        enum:["active","inactive"],
-        required:true,
-        default:"active"
-    },
+    // organizer:{
+    //     type:mongoose.Schema.Types.ObjectId,
+    //     ref:"User",
+    //     required:true
+    //  },
+     
     image:{
         type:String,
         required:[true,"image is required"]

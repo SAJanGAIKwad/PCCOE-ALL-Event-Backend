@@ -1,10 +1,15 @@
 import express from "express";
 import cors from "cors";
-import UserModel from "./Models/Login.js";
+import User from "./Models/user.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+
+import eventRoutes from "./routes/eventRoutes.js";
+
+
+
 const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
 dotenv.config()
@@ -26,7 +31,7 @@ app.get('/', (req, res) => {
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  UserModel.findOne({ email: email })
+  User.findOne({ email: email })
     .then(user => {
       if (user) {
         if (user.password === password) {
@@ -47,8 +52,8 @@ app.post("/login", (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  UserModel.create(req.body)
-    .then(admin_user_datas => res.json(admin_user_datas))
+  User.create(req.body)
+    .then(users => res.json(users))
     .catch(err => res.json(err))
 });
 
@@ -58,7 +63,7 @@ app.get('/profile', (req,res) => {
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const {name,email,_id} = await UserModel.findById(userData.id);
+      const {name,email,_id} = await User.findById(userData.id);
       res.json({name,email,_id});
     });
   } else {
@@ -70,6 +75,14 @@ app.get('/profile', (req,res) => {
 app.post('/logout', (req, res) => {
   res.cookie('token', '').json(true);
 });
+
+
+
+
+
+
+
+app.use('/api/events',eventRoutes);
 
 app.listen(port, () => {
   console.log("Server is Running on port ", port);
