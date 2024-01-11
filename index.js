@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+import bcrypt from 'bcryptjs';
+const saltRounds = 10;
 
 import eventRoutes from "./routes/eventRoutes.js";
 
@@ -19,6 +21,7 @@ const port = process.env.PORT || 3002
 const DATABASE_URL = process.env.MONGODB_URI;
 
 const app = express()
+// app.use(bcrypt); 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
@@ -103,7 +106,7 @@ app.post('/reset-password/:id/:token', (req, res) => {
           bcrypt.hash(password, 10)
           .then(hash => {
               User.findByIdAndUpdate({_id: id}, {password: hash})
-              .then(u => res.send({Status: "Success"}))
+              .then(user => res.send({Status: "Success"}))
               .catch(err => res.send({Status: err}))
           })
           .catch(err => res.send({Status: err}))
