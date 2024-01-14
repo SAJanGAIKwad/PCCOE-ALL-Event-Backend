@@ -5,23 +5,16 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
-import bcrypt from 'bcryptjs';
-const saltRounds = 10;
-
 import eventRoutes from "./routes/eventRoutes.js";
-
-
-
-const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 import nodemailer from 'nodemailer';
-
+// import bcrypt from "bcrypt";
+const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
 
 dotenv.config()
 const port = process.env.PORT || 3002
 const DATABASE_URL = process.env.MONGODB_URI;
 
 const app = express()
-// app.use(bcrypt); 
 app.use(cookieParser());
 app.use(express.json());
 app.use(cors({
@@ -82,7 +75,7 @@ app.post('/forgot-password', (req, res) => {
         from: 'sajangaikwad2002@gmail.com',
         to: 'sajan.gaikwad21@pccoepune.org',
         subject: 'Reset Your Password',
-        text: `http://localhost:5173/reset-password/${user.name}/${token}`
+        text: `http://localhost:5173/reset-password/${user._id}/${token}`
       };
 
       transporter.sendMail(mailOptions, function (error, info) {
@@ -95,32 +88,42 @@ app.post('/forgot-password', (req, res) => {
     });
 })
 
-app.post('/reset-password/:id/:token', (req, res) => {
-  const {id, token} = req.params
-  const {password} = req.body
 
+app.post('/reset-password/:id/:token', (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body
   jwt.verify(token, "jwt_secret_key", (err, decoded) => {
-      if(err) {
-          return res.json({Status: "Error with token"})
-      } else {
-          bcrypt.hash(password, 10)
-          .then(hash => {
-              User.findByIdAndUpdate({_id: id}, {password: hash})
-              .then(user => res.send({Status: "Success"}))
-              .catch(err => res.send({Status: err}))
-          })
-          .catch(err => res.send({Status: err}))
-      }
+    User.findByIdAndUpdate({ _id: id }, { password: password })
+      .then(u => res.send({ Status: "Success" }))
+      .catch(err => res.send({ Status: err }))
   })
 })
+// app.post('/reset-password/:id/:token', (req, res) => {
+//   const { id, token } = req.params;
+//   const { password } = req.body
+
+//   jwt.verify(token, "jwt_secret_key", (err, decoded) => {
+//     if (err) {
+//       return res.json({ Status: "Error with token" })
+//     } else {
+//       bcrypt.hash(password, 10)
+//         .then(hash => {
+//           User.findByIdAndUpdate({ _id: id }, { password: password })
+//             .then(u => res.send({ Status: "Success" }))
+//             .catch(err => res.send({ Status: err }))
+//         })
+//         .catch(err => res.send({ Status: err }))
+//     }
+//   })
+// })
 
 app.get('/profile', (req, res) => {
   const { token } = req.cookies;
   if (token) {
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
-      const {name,email,_id} = await User.findById(userData.id);
-      res.json({name,email,_id});
+      const { name, email, _id } = await User.findById(userData.id);
+      res.json({ name, email, _id });
 
     });
   } else {
@@ -134,12 +137,7 @@ app.post('/logout', (req, res) => {
 });
 
 
-
-
-
-
-
-app.use('/api/events',eventRoutes);
+app.use('/api/events', eventRoutes);
 
 app.listen(port, () => {
   console.log("Server is Running on port ", port);
