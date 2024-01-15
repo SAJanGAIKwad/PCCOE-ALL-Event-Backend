@@ -8,6 +8,7 @@ const createEvent = asyncHandler(async (req,res)=>{
    const {title,description,category,date,location,image} = req.body;
 
    if(!title || !description || !category || !date || !location  || !image){
+       console.log("Please fill all the details!!");
        throw new Error("Please fill all the details!!");
    }
 
@@ -37,6 +38,7 @@ const createEvent = asyncHandler(async (req,res)=>{
            });
 
    } catch(error){
+    console.log("invaliddd");
        res.status(400)
        throw new Error("Invalid Data!")
    }
