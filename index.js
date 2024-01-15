@@ -1,14 +1,16 @@
 import express from "express";
 import cors from "cors";
-import User from "./Models/user.js";
 import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
-import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
-import eventRoutes from "./routes/eventRoutes.js";
-import nodemailer from 'nodemailer';
-// import bcrypt from "bcrypt";
-const jwtSecret = 'fasefraw4r5r3wq45wdfgw34twdfg';
+
+import loginRoutes from "./router/loginRoutes.js";
+import registerRoutes from "./router/registerRoutes.js";
+import forgotRoutes from "./router/forgotRoutes.js";
+import resetRoutes from "./router/resetRoutes.js";
+import profileRoutes from "./router/profileRoutes.js";
+import eventRoutes from "./router/eventRoutes.js";
+
 
 dotenv.config()
 const port = process.env.PORT || 3002
@@ -23,121 +25,23 @@ app.use(cors({
 }));
 
 connectDB(DATABASE_URL);
-app.get('/', (req, res) => {
-  res.send("this is the resposne at home route");
-})
-
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  User.findOne({ email: email })
-    .then(user => {
-      if (user) {
-        if (user.password === password) {
-          jwt.sign({
-            email: user.email,
-            id: user._id
-          }, jwtSecret, {}, (err, token) => {
-            if (err) throw err;
-            res.cookie('token', token).json(user);
-          });
-        } else {
-          res.json("Check Credentials")
-        }
-      } else {
-        res.json("No Record Found")
-      }
-    })
-});
-
-app.post('/register', async (req, res) => {
-  User.create(req.body)
-    .then(users => res.json(users))
-    .catch(err => res.json(err))
-});
-
-app.post('/forgot-password', (req, res) => {
-  const { email } = req.body;
-  User.findOne({ email: email })
-    .then(user => {
-      if (!user) {
-        return res.send({ Status: "User not Existed" })
-      }
-      const token = jwt.sign({ id: user._id }, "jwt_secret_key", { expiresIn: "1d" })
-      var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'sajangaikwad2002@gmail.com',
-          pass: 'hyctdhaxvvjftjlz',
-        }
-      });
-
-      var mailOptions = {
-        from: 'sajangaikwad2002@gmail.com',
-        to: 'sajan.gaikwad21@pccoepune.org',
-        subject: 'Reset Your Password',
-        text: `http://localhost:5173/reset-password/${user._id}/${token}`
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          return res.send({ Status: "Success" })
-        }
-      });
-    });
-})
 
 
-app.post('/reset-password/:id/:token', (req, res) => {
-  const { id, token } = req.params;
-  const { password } = req.body
-  jwt.verify(token, "jwt_secret_key", (err, decoded) => {
-    User.findByIdAndUpdate({ _id: id }, { password: password })
-      .then(u => res.send({ Status: "Success" }))
-      .catch(err => res.send({ Status: err }))
-  })
-})
-// app.post('/reset-password/:id/:token', (req, res) => {
-//   const { id, token } = req.params;
-//   const { password } = req.body
-
-//   jwt.verify(token, "jwt_secret_key", (err, decoded) => {
-//     if (err) {
-//       return res.json({ Status: "Error with token" })
-//     } else {
-//       bcrypt.hash(password, 10)
-//         .then(hash => {
-//           User.findByIdAndUpdate({ _id: id }, { password: password })
-//             .then(u => res.send({ Status: "Success" }))
-//             .catch(err => res.send({ Status: err }))
-//         })
-//         .catch(err => res.send({ Status: err }))
-//     }
-//   })
-// })
-
-app.get('/profile', (req, res) => {
-  const { token } = req.cookies;
-  if (token) {
-    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
-
-    });
-  } else {
-
-    res.json('user Info');
-  }
-});
+app.use('/login', loginRoutes);
+app.use('/register', registerRoutes);
+app.use('/forgot-password', forgotRoutes);
+app.use('/reset-password', resetRoutes);
+app.use('/profile', profileRoutes);
+app.use('/api/events', eventRoutes);
 
 app.post('/logout', (req, res) => {
   res.cookie('token', '').json(true);
 });
 
 
-app.use('/api/events', eventRoutes);
+app.get('/', (req, res) => {
+  res.send("this is the resposne at home route");
+})
 
 app.listen(port, () => {
   console.log("Server is Running on port ", port);
