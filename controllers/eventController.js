@@ -5,9 +5,9 @@ const createEvent = asyncHandler(async (req,res)=>{
 
     // const organizer = req.user.id;
 
-   const {title,description,category,date,location,image} = req.body;
+   const {title,description,date,location} = req.body;
 
-   if(!title || !description || !category || !date || !location  || !image){
+   if(!title || !description ||  !location ){
        console.log("Please fill all the details!!");
        throw new Error("Please fill all the details!!");
    }
@@ -15,11 +15,11 @@ const createEvent = asyncHandler(async (req,res)=>{
    const newEvent= new Event({
        title,
        description,
-       category,
+    //    category,
        date,
-       location,
+       location
     //    organizer,
-       image
+    //    image
    });
 
    try{
@@ -30,18 +30,26 @@ const createEvent = asyncHandler(async (req,res)=>{
                _id: newEvent._id,
                title: newEvent.title,
                description: newEvent.description,
-               category: newEvent.category,
+            //    category: newEvent.category,
                date: newEvent.date,
                location: newEvent.location,
             //    organizer: newEvent.organizer,
-               image: newEvent.image
+            //    image: newEvent.image
            });
 
    } catch(error){
-    console.log("invaliddd");
        res.status(400)
        throw new Error("Invalid Data!")
    }
 });
 
-export default createEvent;
+
+
+
+
+const getAllEvents = asyncHandler(async (req,res)=>{
+    const events = await Event.find({});
+    res.json(events);
+});
+
+export {getAllEvents,createEvent};

@@ -32,6 +32,7 @@ app.use('/register', registerRoutes);
 app.use('/forgot-password', forgotRoutes);
 app.use('/reset-password', resetRoutes);
 app.use('/profile', profileRoutes);
+
 app.use('/api/events', eventRoutes);
 
 app.post('/logout', (req, res) => {
@@ -42,6 +43,7 @@ app.post('/logout', (req, res) => {
 app.get('/', (req, res) => {
   res.send("this is the resposne at home route");
 })
+
 
 app.listen(port, () => {
   console.log("Server is Running on port ", port);
