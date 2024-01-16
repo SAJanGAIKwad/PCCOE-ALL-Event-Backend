@@ -17,7 +17,7 @@ const createEvent = asyncHandler(async (req,res)=>{
        description,
     //    category,
        date,
-       location
+       location,
     //    organizer,
     //    image
    });
@@ -30,15 +30,16 @@ const createEvent = asyncHandler(async (req,res)=>{
                _id: newEvent._id,
                title: newEvent.title,
                description: newEvent.description,
-            //    category: newEvent.category,
+               category: newEvent.category,
                date: newEvent.date,
                location: newEvent.location,
-            //    organizer: newEvent.organizer,
-            //    image: newEvent.image
+               organizer: newEvent.organizer,
+               image: newEvent.image
            });
 
    } catch(error){
        res.status(400)
+       console.log("invalid data")
        throw new Error("Invalid Data!")
    }
 });
