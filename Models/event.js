@@ -11,7 +11,8 @@ const EventSchema=new mongoose.Schema({
     },
     category:{
         type:String,
-        required:true
+        // required:true
+        default:"technical"
     },
     date:{
        eventStart:{
@@ -40,7 +41,7 @@ const EventSchema=new mongoose.Schema({
      
     image:{
         type:String,
-        required:[true,"image is required"]
+        // required:[true,"image is required"]
     }
 
 },{timestamps:true});
