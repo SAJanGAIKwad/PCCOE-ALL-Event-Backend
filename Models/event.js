@@ -11,17 +11,17 @@ const EventSchema=new mongoose.Schema({
     },
     category:{
         type:String,
-        // required:true
+        required:true,
         default:"technical"
     },
     date:{
        eventStart:{
         type:Date,
-        required:true
+        // required:true
        },
        eventEnd:{
         type:Date,
-        required:true
+        // required:true
        }
     },
     location:{
@@ -33,15 +33,15 @@ const EventSchema=new mongoose.Schema({
         required:true,
         default:0
     },
-    // organizer:{
-    //     type:mongoose.Schema.Types.ObjectId,
-    //     ref:"User",
-    //     required:true
-    //  },
+    organizer:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        // required:true
+     },
      
     image:{
-        type:String,
-        // required:[true,"image is required"]
+        type:String,    //cloudinary url
+       
     }
 
 },{timestamps:true});
