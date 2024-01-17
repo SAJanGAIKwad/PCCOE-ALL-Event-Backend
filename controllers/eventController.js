@@ -1,5 +1,6 @@
 import Event from "../Models/event.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
+import uploadOnCloudinary from "../utils/cloudinary.js";
 
 const createEvent = asyncHandler(async (req,res)=>{
 
@@ -12,6 +13,14 @@ const createEvent = asyncHandler(async (req,res)=>{
        throw new Error("Please fill all the details!!");
    }
 
+   const imageLocalPath=req.files?.image[0]?.path;
+   if(!imageLocalPath){
+         console.log("Please provide a valid image");
+         throw new Error("Please provide a valid image");
+   }
+
+   const image=await uploadOnCloudinary(imageLocalPath);   //cloudinary sends whole response object. We need to extract url from it. ->image.url
+
    const newEvent= new Event({
        title,
        description,
@@ -19,7 +28,7 @@ const createEvent = asyncHandler(async (req,res)=>{
        date,
        location,
     //    organizer,
-    //    image
+       image:image.url || ""
    });
 
    try{
