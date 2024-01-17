@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
       cb(null, './public/temp')
     },
     filename: function (req, file, cb) {
-      
+      console.log("in multer-middleware-file: ",file);
       cb(null, file.originalname)
     }
 })
