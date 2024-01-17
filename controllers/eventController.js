@@ -6,12 +6,13 @@ const createEvent = asyncHandler(async (req,res)=>{
 
     // const organizer = req.user.id;
 
-   const {title,description,location} = req.body;
+   const {title,description,category,date,location} = req.body;
 
-   if(!title || !description ||  !location ){
+   if(!title || !description || !date || !location ){
        console.log("Please fill all the details!!");
        throw new Error("Please fill all the details!!");
    }
+//    console.log("file from req: ",req.files.image);
 
    const imageLocalPath=req.files?.image[0]?.path;
    if(!imageLocalPath){
@@ -27,8 +28,8 @@ const createEvent = asyncHandler(async (req,res)=>{
    const newEvent= new Event({
        title,
        description,
-    //    category,
-    //    date,
+       category,
+       date,
        location,
     //    organizer,
        image:image.url || ""
