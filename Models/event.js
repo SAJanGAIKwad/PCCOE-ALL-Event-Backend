@@ -17,11 +17,11 @@ const EventSchema=new mongoose.Schema({
     date:{
        eventStart:{
         type:Date,
-        // required:true
+        required:true
        },
        eventEnd:{
         type:Date,
-        // required:true
+        required:true
        }
     },
     location:{
@@ -42,9 +42,27 @@ const EventSchema=new mongoose.Schema({
     image:{
         type:String,    //cloudinary url
        
+    },
+    status:{
+        type: String,
+        enum: ['live','past','upcoming'],
+        default:'upcoming'
     }
 
 },{timestamps:true});
+
+// Pre-save hook to set the status based on the event dates
+EventSchema.pre('save', function(next) {
+    const now = new Date();
+    if (this.date.eventStart <= now && this.date.eventEnd >= now) {
+        this.status = 'live';
+    } else if (this.date.eventEnd < now) {
+        this.status = 'past';
+    } else {
+        this.status = 'upcoming';
+    }
+    next();
+});
 
 const Event=mongoose.model("Event",EventSchema)
 
