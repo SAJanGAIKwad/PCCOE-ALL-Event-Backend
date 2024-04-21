@@ -10,14 +10,17 @@ import fs from 'fs';
 // });
 
 cloudinary.config({ 
-  cloud_name: 'vaibhavdada',
-  api_key: '627625158489797',
-  api_secret:'h1uAJjP8prirKsKL9SXY_hGqSH0' 
+//   cloud_name: 'vaibhavdada',
+//   api_key: '627625158489797',
+//   api_secret:'h1uAJjP8prirKsKL9SXY_hGqSH0' 
+    cloud_name:'dvoj8b5jm',
+    api_key:'234331867755585',
+    api_secret: 'F8K9-Ct7AHx2Kfos6dJW7MuZ9aY'
 });
 
 
 const uploadOnCloudinary=async (localFilePath)=>{
-
+    console.log(localFilePath)
     // console.log(process.env.CLOUDINARY_CLOUD_NAME,process.env.CLOUDINARY_API_KEY,process.env.CLOUDINARY_API_SECRET)
     try{
         if(!localFilePath){

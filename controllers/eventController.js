@@ -5,7 +5,7 @@ import uploadOnCloudinary from "../utils/cloudinary.js";
 const createEvent = asyncHandler(async (req,res)=>{
 
     // const organizer = req.user.id;
-
+     
    const {title,description,category,date,location} = req.body;
 
    if(!title || !description || !date || !location ){
@@ -47,7 +47,8 @@ const createEvent = asyncHandler(async (req,res)=>{
                date: newEvent.date,
                location: newEvent.location,
                organizer: newEvent.organizer,
-               image: newEvent.image
+               image: newEvent.image,
+               status:newEvent.status
            });
 
    } catch(error){
@@ -57,13 +58,40 @@ const createEvent = asyncHandler(async (req,res)=>{
    }
 });
 
+const getLiveEvents = async (req, res) => {
+ try {
+    const liveEvents = await Event.find({ status: 'live' });
+    res.json(liveEvents);
+ } catch (error) {
+    res.status(500).json({ message: 'Error fetching live events' });
+ }
+};
 
+const getPastEvents = async (req, res) => {
+ try {
+    const pastEvents = await Event.find({ status: 'past' });
+    res.json(pastEvents);
+ } catch (error) {
+    res.status(500).json({ message: 'Error fetching past events' });
+ }
+};
 
+const getUpcomingEvents = async (req, res) => {
+ try {
+    const upcomingEvents = await Event.find({ status: 'upcoming' });
+    res.json(upcomingEvents);
+ } catch (error) {
+    res.status(500).json({ message: 'Error fetching upcoming events' });
+ }
+};
 
+const getAllEvents = async (req, res) => {
+ try {
+    const allEvents = await Event.find({});
+    res.json(allEvents);
+ } catch (error) {
+    res.status(500).json({ message: 'Error fetching all events' });
+ }
+};
 
-const getAllEvents = asyncHandler(async (req,res)=>{
-    const events = await Event.find({});
-    res.json(events);
-});
-
-export {getAllEvents,createEvent};
+export {getLiveEvents,getPastEvents,getUpcomingEvents,getAllEvents,createEvent};
